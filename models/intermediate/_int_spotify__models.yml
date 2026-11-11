@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: int_spotify__sessionized_events
+    description: >
+      Gaps-and-islands sessionization. A new session starts when the gap
+      between the previous stream's end and the current stream's start
+      exceeds var('session_gap_seconds').
+    columns:
+      - name: stream_event_id
+        data_tests: [unique, not_null]
+      - name: session_id
+        data_tests: [not_null]
+      - name: event_seq_in_session
+        data_tests: [not_null]
+
+  - name: int_spotify__skip_classification
+    description: Adds duration, genre, pct_played and the engagement bucket (skip_type).
+    columns:
+      - name: stream_event_id
+        data_tests: [unique, not_null]
+      - name: skip_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Complete Listen', 'Explicit Skip', 'Background Exit', 'Partial Listen']

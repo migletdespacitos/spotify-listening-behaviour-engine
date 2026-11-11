@@ -1,0 +1,104 @@
+{
+  "generated_at_utc": "2026-11-11T06:24:52+00:00",
+  "source_db": "spotify_analytics.duckdb",
+  "exports": [
+    {
+      "file": "dim_listening_sessions.csv",
+      "rows": 9495,
+      "grain": [
+        "session_id"
+      ],
+      "columns": [
+        "session_id",
+        "session_start_ts",
+        "session_end_ts",
+        "total_tracks_played",
+        "total_duration_minutes",
+        "primary_genre_or_artist",
+        "session_date",
+        "session_start_hour",
+        "session_day_of_week",
+        "session_day_of_week_num",
+        "session_span_minutes",
+        "session_length_bucket",
+        "primary_artist",
+        "primary_genre",
+        "unique_tracks",
+        "unique_artists",
+        "complete_listens",
+        "explicit_skips",
+        "partial_listens",
+        "background_exits",
+        "completion_rate_pct",
+        "explicit_skip_rate_pct",
+        "session_end_reason",
+        "used_shuffle",
+        "primary_platform"
+      ]
+    },
+    {
+      "file": "fact_stream_events.csv",
+      "rows": 107967,
+      "grain": [
+        "stream_event_id"
+      ],
+      "columns": [
+        "timestamp",
+        "session_id",
+        "artist_name",
+        "track_name",
+        "duration_played_sec",
+        "skip_type",
+        "hour_of_day",
+        "day_of_week",
+        "stream_event_id",
+        "stream_end_ts",
+        "event_date",
+        "day_of_week_num",
+        "day_type",
+        "daypart",
+        "event_seq_in_session",
+        "content_type",
+        "album_name",
+        "genre",
+        "track_duration_sec",
+        "pct_played",
+        "is_explicit_skip",
+        "is_any_skip",
+        "is_complete_listen",
+        "is_qualified_stream",
+        "reason_start",
+        "reason_end",
+        "platform",
+        "is_shuffle"
+      ]
+    },
+    {
+      "file": "mart_artist_obsessions.csv",
+      "rows": 344917,
+      "grain": [
+        "date",
+        "artist_name"
+      ],
+      "columns": [
+        "date",
+        "artist_name",
+        "7d_rolling_streams",
+        "30d_rolling_streams",
+        "share_of_total_listens_pct",
+        "daily_streams",
+        "share_daily_pct",
+        "share_30d_pct",
+        "momentum_ratio_7d_vs_30d",
+        "rank_7d",
+        "is_full_7d_window",
+        "is_full_30d_window",
+        "is_obsessed",
+        "obsession_phase",
+        "obsession_streak_id",
+        "obsession_streak_day",
+        "obsession_streak_length_days"
+      ]
+    }
+  ]
+}

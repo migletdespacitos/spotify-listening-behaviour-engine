@@ -1,0 +1,15 @@
+# dbt artefacts
+target/
+dbt_packages/
+logs/
+# local warehouse (rebuilt by `make all`)
+*.duckdb
+*.duckdb.wal
+# python
+__pycache__/
+.venv/
+
+# your raw Spotify export contains IP addresses and full listening history: keep it out of git
+data/raw/
+.user.yml
+outputs/*.csv

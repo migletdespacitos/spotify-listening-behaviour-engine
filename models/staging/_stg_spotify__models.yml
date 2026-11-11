@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: stg_spotify__streams
+    description: >
+      Typed, de-duplicated Spotify stream events read directly from the raw
+      JSON export with read_json_auto(). `ts` is converted into explicit
+      start/end timestamps in UTC and listener-local time.
+    columns:
+      - name: stream_event_id
+        description: Deterministic md5 surrogate key.
+        data_tests: [unique, not_null]
+      - name: stream_start_ts_utc
+        data_tests: [not_null]
+      - name: stream_end_ts_utc
+        description: Spotify `ts` — when the stream ended (UTC).
+        data_tests: [not_null]
+      - name: ms_played
+        data_tests: [not_null]
+      - name: content_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['music', 'podcast', 'unavailable']
+      - name: track_name
+        description: NULL-free label (episode name for podcasts, 'Unknown Track' otherwise).
+        data_tests: [not_null]
+      - name: artist_name
+        data_tests: [not_null]
+
+  - name: stg_spotify__track_catalog
+    description: Track reference data (duration, genre) from the seed file.
+    columns:
+      - name: spotify_track_uri
+        data_tests: [unique, not_null]
+      - name: duration_ms
+        data_tests: [not_null]

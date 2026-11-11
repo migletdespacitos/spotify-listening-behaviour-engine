@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: marts_fct_stream_events
+    description: Denormalised event-level fact table (local time). Source of fact_stream_events.csv.
+    columns:
+      - name: stream_event_id
+        data_tests: [unique, not_null]
+      - name: session_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('marts_dim_listening_sessions')
+                field: session_id
+      - name: hour_of_day
+        data_tests: [not_null]
+
+  - name: marts_dim_listening_sessions
+    description: One row per listening session. Source of dim_listening_sessions.csv.
+    columns:
+      - name: session_id
+        data_tests: [unique, not_null]
+      - name: total_tracks_played
+        data_tests: [not_null]
+      - name: primary_genre_or_artist
+        data_tests: [not_null]
+
+  - name: marts_listener_obsessions
+    description: >
+      Dense (date x artist) time series with rolling 7d/30d stream volumes,
+      share-of-ear, momentum and obsession streaks. Source of mart_artist_obsessions.csv.
+    data_tests:
+      - unique_combination_of_columns:
+          arguments:
+            columns: ['calendar_date', 'artist_name']
+    columns:
+      - name: calendar_date
+        data_tests: [not_null]
+      - name: artist_name
+        data_tests: [not_null]

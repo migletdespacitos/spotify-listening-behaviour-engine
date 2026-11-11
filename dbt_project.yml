@@ -1,0 +1,66 @@
+name: 'spotify_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'spotify_analytics'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+analysis-paths: ["analyses"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages", "logs"]
+
+
+vars:
+  # Ingestion: glob, so multi-file exports just work. Default = a real Spotify
+  # extended-history export (Video files are deliberately excluded).
+  # Synthetic demo data:  make synthetic   (or --vars '{raw_streams_glob: "data/synthetic/endsong_*.json"}')
+  raw_streams_glob: 'data/raw/Streaming_History_Audio_*.json'
+
+  # Spotify `ts` is UTC. All calendar logic (hour of day, day of week, daily
+  # rollups) is done in the listener's local time zone.
+  local_timezone: 'Asia/Singapore'
+
+  # Sessionization: a gap > 15 minutes between the end of one stream and the
+  # start of the next one opens a new session.
+  session_gap_seconds: 900
+
+  # Skip classification
+  complete_listen_pct_threshold: 0.90      # >= 90% of track duration played
+  explicit_skip_max_ms: 30000              # < 30s played + fwdbtn
+
+  # A "stream" for affinity purposes = >= 30s played (Spotify's own count rule)
+  qualified_stream_min_ms: 30000
+
+  # Obsession streak rules (applied to the 7-day rolling window)
+  obsession_min_share_7d_pct: 30           # artist owns >= 30% of last-7d streams
+  obsession_min_streams_7d: 8              # ...and has a meaningful absolute volume
+  obsession_min_lifetime_streams: 100      # artists below this never get a dense daily grid (keeps the mart small)
+  rising_momentum_ratio: 1.15              # obsession labelled 'Rising' while 7d run-rate >= 1.15x its 30d run-rate
+
+models:
+  spotify_analytics:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
+
+seeds:
+  spotify_analytics:
+    +schema: seeds
+    seed_track_catalog:
+      +column_types:
+        spotify_track_uri: varchar
+        track_name: varchar
+        artist_name: varchar
+        album_name: varchar
+        genre: varchar
+        duration_ms: integer

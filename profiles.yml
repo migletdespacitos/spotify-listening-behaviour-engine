@@ -1,0 +1,9 @@
+spotify_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: spotify_analytics.duckdb
+      threads: 4
+      settings:
+        TimeZone: 'UTC'
